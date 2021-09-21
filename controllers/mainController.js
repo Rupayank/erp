@@ -1,4 +1,4 @@
-const { update } = require('../models/mainModel');
+// const { update } = require('../models/mainModel');
 const db = require('../models/mainModel');
 
 module.exports={

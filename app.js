@@ -15,10 +15,10 @@ con.on('open',()=>{
 app.use(express.json())
 
 ////////Required to get data from html
-// app.use(parser.json())
-// app.use(parser.urlencoded({    
-//     extended: true})); 
-// app.use(cors())
+app.use(parser.json())
+app.use(parser.urlencoded({    
+    extended: true})); 
+app.use(cors())
 ////////
 
 //Routes
@@ -26,12 +26,8 @@ const mainRoute=require('./router/mainRoute')
 app.use('/home',mainRoute)
 
 //BDA assignment
-// app.post('/check',async(req,res)=>{
-//     console.log(req.body);
-//     res.send({
-//         response:req.body
-//     })
-// })
+const bdaRoute=require('./router/bdaRoute')
+app.use('/check',bdaRoute)
 
 //Listen to server
 app.listen(9000,()=>{
