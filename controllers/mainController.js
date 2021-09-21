@@ -1,3 +1,4 @@
+const { update } = require('../models/mainModel');
 const db = require('../models/mainModel');
 
 module.exports={
@@ -22,7 +23,8 @@ module.exports={
     async findParticular(req,res){
         try
         {
-            const data=db.findById(req.query.id)
+            // console.log(req.params.id);
+            const data= await db.findById(req.query.id)
             res.send({
                 status:200,
                 response:data
@@ -58,6 +60,26 @@ module.exports={
                 message:`Internal server error. ${err.message}`,
                 response:null
             })
+        }
+    },
+    async deleteEmp(req,res){
+        try
+        {
+
+        }
+        catch(err)
+        {
+
+        }
+    },
+    async update(req,res){
+        try
+        {
+
+        }
+        catch(err)
+        {
+
         }
     }
 }

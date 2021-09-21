@@ -5,4 +5,7 @@ const mainController=require('../controllers/mainController')
 router.get('/',mainController.find)
 router.get('/emp',mainController.findParticular)
 router.post('/',mainController.addDetails)
+router.delete('/',mainController.deleteEmp)
+router.patch('/',mainController.update)
+
 module.exports=router;
