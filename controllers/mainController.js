@@ -65,21 +65,41 @@ module.exports={
     async deleteEmp(req,res){
         try
         {
-
+            const del =await db.deleteOne({_id:req.query.id})
+            res.send({
+                status:200,
+                message:'Deleted',
+                response:del
+            })
         }
         catch(err)
         {
-
+            res.send({
+                status:502,
+                message:`Internal server error. ${err.message}`,
+                response:null
+            })
         }
     },
     async update(req,res){
         try
         {
-
+            const data=await db.findById(req.query.id)
+            data.email=req.body.email
+            const result=await data.save()
+            res.send({
+                status:200,
+                message:'Updated',
+                response:result
+            })
         }
         catch(err)
         {
-
+            res.send({
+                status:502,
+                message:`Internal server error. ${err.message}`,
+                response:null
+            })
         }
     }
 }
