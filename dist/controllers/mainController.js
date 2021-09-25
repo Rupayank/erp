@@ -37,156 +37,180 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var db = require("../models/mainModel");
+// const db2 = require("../models/data");
+var fs = require("fs");
+// interface Employee {
+// 	id: number;
+// 	name: string;
+// 	level: string;
+// 	contact: number;
+// 	dateOfJoining: Date;
+// }
 module.exports = {
     find: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, err_1;
+            var data;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, db.find()];
-                    case 1:
-                        data = _a.sent();
-                        res.send({
-                            response: data,
-                        });
-                        return [3 /*break*/, 3];
-                    case 2:
-                        err_1 = _a.sent();
-                        res.send({
-                            status: 502,
-                            response: null,
-                        });
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                try {
+                    data = fs.readFileSync("data.js");
+                    data = JSON.parse(data);
+                    // const data = await db.find();
+                    res.send({
+                        response: data,
+                    });
                 }
+                catch (err) {
+                    console.log(err);
+                    res.send({
+                        status: 502,
+                        response: null,
+                    });
+                }
+                return [2 /*return*/];
             });
         });
     },
     findParticular: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, err_2;
+            var data, output_1;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, db.findById(req.query.id)];
-                    case 1:
-                        data = _a.sent();
-                        res.send({
-                            status: 200,
-                            response: data,
-                        });
-                        return [3 /*break*/, 3];
-                    case 2:
-                        err_2 = _a.sent();
-                        res.send({
-                            status: 502,
-                            message: "Internal server error.",
-                            response: null,
-                        });
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                try {
+                    data = fs.readFileSync("data.js");
+                    data = JSON.parse(data);
+                    output_1 = {};
+                    data.forEach(function (info) {
+                        if (info.id == req.query.id) {
+                            output_1 = info;
+                        }
+                    });
+                    res.send({
+                        response: output_1,
+                    });
+                    // const data = await db.findById(req.query.id);
+                    // res.send({
+                    // 	status: 200,
+                    // 	response: data,
+                    // });
                 }
+                catch (err) {
+                    res.send({
+                        status: 502,
+                        message: "Internal server error. " + err.message,
+                        response: null,
+                    });
+                }
+                return [2 /*return*/];
             });
         });
     },
     addDetails: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name_1, contact, email, level, employee, emp, err_3;
+            var _a, name_1, contact, email, level, data, stringifyData;
             return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _b.trys.push([0, 2, , 3]);
-                        _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level;
-                        employee = new db({
-                            name: name_1,
-                            contact: contact,
-                            email: email,
-                            level: level,
-                        });
-                        return [4 /*yield*/, employee.save()];
-                    case 1:
-                        emp = _b.sent();
-                        res.send({
-                            status: 200,
-                            response: emp,
-                        });
-                        return [3 /*break*/, 3];
-                    case 2:
-                        err_3 = _b.sent();
-                        res.send({
-                            status: 502,
-                            message: "Internal server error.",
-                            response: null,
-                        });
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                try {
+                    _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level;
+                    data = fs.readFileSync("data.js");
+                    data = JSON.parse(data);
+                    data.push(req.body);
+                    stringifyData = JSON.stringify(data);
+                    fs.writeFileSync("data.js", stringifyData);
+                    // console.log(data);
+                    res.send({
+                        status: 200,
+                        response: data,
+                    });
+                    // const employee = new db({
+                    // 	name,
+                    // 	contact,
+                    // 	email,
+                    // 	level,
+                    // });
+                    // const emp = await employee.save();
+                    // res.send({
+                    // 	status: 200,
+                    // 	response: emp,
+                    // });
                 }
+                catch (err) {
+                    res.send({
+                        status: 502,
+                        message: "Internal server error.",
+                        response: null,
+                    });
+                }
+                return [2 /*return*/];
             });
         });
     },
     deleteEmp: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var del, err_4;
+            var data, filterUser, stringifyData;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, db.deleteOne({ _id: req.query.id })];
-                    case 1:
-                        del = _a.sent();
-                        res.send({
-                            status: 200,
-                            message: "Deleted",
-                            response: del,
-                        });
-                        return [3 /*break*/, 3];
-                    case 2:
-                        err_4 = _a.sent();
-                        res.send({
-                            status: 502,
-                            message: "Internal server error.",
-                            response: null,
-                        });
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                try {
+                    data = fs.readFileSync("data.js");
+                    data = JSON.parse(data);
+                    filterUser = data.filter(function (user) { return user.id != req.query.id; });
+                    stringifyData = JSON.stringify(filterUser);
+                    fs.writeFileSync("data.js", stringifyData);
+                    res.send({
+                        status: 200,
+                        message: "Deleted",
+                        response: filterUser,
+                    });
+                    // const del = await db.deleteOne({ _id: req.query.id });
+                    // res.send({
+                    // 	status: 200,
+                    // 	message: "Deleted",
+                    // 	response: del,
+                    // });
                 }
+                catch (err) {
+                    res.send({
+                        status: 502,
+                        message: "Internal server error.",
+                        response: null,
+                    });
+                }
+                return [2 /*return*/];
             });
         });
     },
     update: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, result, err_5;
+            var data, user, stringifyData;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, db.findByIdAndUpdate(req.query.id, req.body, {
-                                new: true,
-                            })];
-                    case 1:
-                        data = _a.sent();
-                        return [4 /*yield*/, data.save()];
-                    case 2:
-                        result = _a.sent();
-                        res.send({
-                            status: 200,
-                            message: "Updated",
-                            response: result,
-                        });
-                        return [3 /*break*/, 4];
-                    case 3:
-                        err_5 = _a.sent();
-                        res.send({
-                            status: 502,
-                            message: "Internal server error.",
-                            response: null,
-                        });
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                try {
+                    data = fs.readFileSync("data.js");
+                    data = JSON.parse(data);
+                    user = data.filter(function (user) { return user.id != req.query.id; });
+                    user.push(req.body);
+                    stringifyData = JSON.stringify(user);
+                    fs.writeFileSync("data.js", stringifyData);
+                    res.send({
+                        status: 200,
+                        message: "Updated",
+                        response: user,
+                    });
+                    // const data = await db.findByIdAndUpdate(req.query.id, req.body, {
+                    // 	new: true,
+                    // });
+                    // // data.email=req.body.email
+                    // const result = await data.save();
+                    // res.send({
+                    // 	status: 200,
+                    // 	message: "Updated",
+                    // 	response: result,
+                    // });
                 }
+                catch (err) {
+                    console.log(err);
+                    res.send({
+                        status: 502,
+                        message: "Internal server error.",
+                        response: null,
+                    });
+                }
+                return [2 /*return*/];
             });
         });
     },
