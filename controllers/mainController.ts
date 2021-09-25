@@ -1,4 +1,3 @@
-const db = require("../models/mainModel");
 const fs = require("fs");
 import { Request, Response } from "express";
 module.exports = {
