@@ -37,15 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var db = require("../models/mainModel");
-// const db2 = require("../models/data");
 var fs = require("fs");
-// interface Employee {
-// 	id: number;
-// 	name: string;
-// 	level: string;
-// 	contact: number;
-// 	dateOfJoining: Date;
-// }
 module.exports = {
     find: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
@@ -54,7 +46,6 @@ module.exports = {
                 try {
                     data = fs.readFileSync("data.js");
                     data = JSON.parse(data);
-                    // const data = await db.find();
                     res.send({
                         response: data,
                     });
@@ -86,11 +77,6 @@ module.exports = {
                     res.send({
                         response: output_1,
                     });
-                    // const data = await db.findById(req.query.id);
-                    // res.send({
-                    // 	status: 200,
-                    // 	response: data,
-                    // });
                 }
                 catch (err) {
                     res.send({
@@ -114,22 +100,10 @@ module.exports = {
                     data.push(req.body);
                     stringifyData = JSON.stringify(data);
                     fs.writeFileSync("data.js", stringifyData);
-                    // console.log(data);
                     res.send({
                         status: 200,
                         response: data,
                     });
-                    // const employee = new db({
-                    // 	name,
-                    // 	contact,
-                    // 	email,
-                    // 	level,
-                    // });
-                    // const emp = await employee.save();
-                    // res.send({
-                    // 	status: 200,
-                    // 	response: emp,
-                    // });
                 }
                 catch (err) {
                     res.send({
@@ -157,12 +131,6 @@ module.exports = {
                         message: "Deleted",
                         response: filterUser,
                     });
-                    // const del = await db.deleteOne({ _id: req.query.id });
-                    // res.send({
-                    // 	status: 200,
-                    // 	message: "Deleted",
-                    // 	response: del,
-                    // });
                 }
                 catch (err) {
                     res.send({
@@ -191,16 +159,6 @@ module.exports = {
                         message: "Updated",
                         response: user,
                     });
-                    // const data = await db.findByIdAndUpdate(req.query.id, req.body, {
-                    // 	new: true,
-                    // });
-                    // // data.email=req.body.email
-                    // const result = await data.save();
-                    // res.send({
-                    // 	status: 200,
-                    // 	message: "Updated",
-                    // 	response: result,
-                    // });
                 }
                 catch (err) {
                     console.log(err);
