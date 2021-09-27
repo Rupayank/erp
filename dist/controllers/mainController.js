@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var db = require("../models/mainModel");
 var fs = require("fs");
 module.exports = {
     find: function (req, res) {
