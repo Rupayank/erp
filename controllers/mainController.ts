@@ -1,5 +1,7 @@
 const fs = require("fs");
 import { Request, Response } from "express";
+
+import {Employee,information} from "../allData";
 module.exports = {
 	async find(req: Request, res: Response) {
 		try {
@@ -40,10 +42,66 @@ module.exports = {
 			});
 		}
 	},
-
 	async addDetails(req: Request, res: Response) {
 		try {
-			const { name, contact, email, level } = req.body;
+			const { id,name, contact, email, level,dateOfJoining } = req.body;
+			//Added new below
+			// interface Employee {
+			// 	id: number;
+			// 	name: string;
+			// 	level: string;
+			// 	contact: number;
+			// 	dateOfJoining: Date;
+			// }
+			class Head
+			{				
+				id:number;
+				name:string;
+				contact:number;
+				email:string;
+				level:string;
+				constructor(id:number,name:string,contact:number,email:string,level:string)
+				{
+					this.id=id;
+					this.name=name;
+					this.level=level;
+					this.contact=contact;
+					this.email=email
+				}
+				jsonOut():any{
+					let obj={
+						id:this.id,
+						name:this.name,
+						contact:this.contact,
+						email:this.email,
+						level:this.level
+					}
+					return obj
+				}
+			}
+			class Emp extends Head
+			{
+				readonly supervisor:string="Manager";
+				constructor(id:number,name:string,contact:number,email:string,level:string)
+				{
+					super(id,name, contact, email, level);
+				}
+				
+			}
+			let emp
+			if(level==="Manager")
+			{
+				emp=new Head(id,name, contact, email, level);
+			}
+			else 
+			{
+				emp=new Emp(id,name, contact, email, level);
+			}
+
+			const info:Employee=req.body;
+			information.push(info);
+			console.log(emp);
+			//Added new above
 
 			let data = fs.readFileSync("data.js");
 			data = JSON.parse(data);
@@ -55,7 +113,7 @@ module.exports = {
 
 			res.send({
 				status: 200,
-				response: data,
+				response: req.body,
 			});
 		} catch (err) {
 			res.send({

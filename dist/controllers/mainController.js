@@ -90,18 +90,44 @@ module.exports = {
     },
     addDetails: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name_1, contact, email, level, data, stringifyData;
+            var _a, id, name_1, contact, email, level, dateOfJoining, info, Head, emp;
             return __generator(this, function (_b) {
                 try {
-                    _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level;
-                    data = fs.readFileSync("data.js");
-                    data = JSON.parse(data);
-                    data.push(req.body);
-                    stringifyData = JSON.stringify(data);
-                    fs.writeFileSync("data.js", stringifyData);
+                    _a = req.body, id = _a.id, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, dateOfJoining = _a.dateOfJoining;
+                    info = req.body;
+                    Head = /** @class */ (function () {
+                        function Head(id, name, contact, email, level) {
+                            this.supervisor = "Manager";
+                            this.id = id;
+                            this.name = name;
+                            this.level = level;
+                            this.contact = contact;
+                            this.email = email;
+                        }
+                        Head.prototype.jsonOut = function () {
+                            var obj = {
+                                id: this.id,
+                                name: this.name,
+                                contact: this.contact,
+                                email: this.email,
+                                level: this.level
+                            };
+                            return obj;
+                        };
+                        return Head;
+                    }());
+                    emp = new Head(id, name_1, contact, email, level);
+                    console.log(info);
+                    //Added new above
+                    // let data = fs.readFileSync("data.js");
+                    // data = JSON.parse(data);
+                    // data.push(req.body);
+                    // //Save data
+                    // const stringifyData = JSON.stringify(data);
+                    // fs.writeFileSync("data.js", stringifyData);
                     res.send({
                         status: 200,
-                        response: data,
+                        response: req.body,
                     });
                 }
                 catch (err) {
