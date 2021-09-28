@@ -11,7 +11,6 @@ module.exports = {
 				response: data,
 			});
 		} catch (err) {
-			console.log(err);
 			res.send({
 				status: 502,
 				response: null,
@@ -46,13 +45,6 @@ module.exports = {
 		try {
 			const { id,name, contact, email, level,dateOfJoining } = req.body;
 			//Added new below
-			// interface Employee {
-			// 	id: number;
-			// 	name: string;
-			// 	level: string;
-			// 	contact: number;
-			// 	dateOfJoining: Date;
-			// }
 			class Head
 			{				
 				id:number;
@@ -100,12 +92,12 @@ module.exports = {
 
 			const info:Employee=req.body;
 			information.push(info);
-			console.log(emp);
+			// console.log(emp);
 			//Added new above
 
 			let data = fs.readFileSync("data.js");
 			data = JSON.parse(data);
-			data.push(req.body);
+			data.push(emp);
 
 			//Save data
 			const stringifyData = JSON.stringify(data);
@@ -113,7 +105,7 @@ module.exports = {
 
 			res.send({
 				status: 200,
-				response: req.body,
+				response: emp,
 			});
 		} catch (err) {
 			res.send({
