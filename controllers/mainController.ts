@@ -92,7 +92,7 @@ module.exports = {
 
 			const info:Employee=req.body;
 			information.push(info);
-			// console.log(emp);
+			// console.log(info);
 			//Added new above
 
 			let data = fs.readFileSync("data.js");

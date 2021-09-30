@@ -7,7 +7,7 @@ export interface Employee {
 }
 
 
- export const information: Employee[] = [
+ export let information: Employee[] = [
         {
             id: 1,
             name:"RK",
