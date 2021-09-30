@@ -159,7 +159,7 @@ module.exports = {
 				response: user,
 			});
 		} catch (err) {
-			console.log(err);
+			// console.log(err);
 			res.send({
 				status: 502,
 				message: `Internal server error.`,
