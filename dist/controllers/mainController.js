@@ -52,6 +52,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
+var uuid_1 = require("uuid");
 var allData_1 = require("../allData");
 module.exports = {
     find: function (req, res) {
@@ -113,13 +114,13 @@ module.exports = {
     },
     addDetails: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, id, name_1, contact, email, level, dateOfJoining, Head, Emp, emp, info, data, stringifyData;
+            var _a, name_1, contact, email, level, dateOfJoining, Head, Emp, emp, info, data, stringifyData;
             return __generator(this, function (_b) {
                 try {
-                    _a = req.body, id = _a.id, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, dateOfJoining = _a.dateOfJoining;
+                    _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, dateOfJoining = _a.dateOfJoining;
                     Head = /** @class */ (function () {
-                        function Head(id, name, contact, email, level) {
-                            this.id = id;
+                        function Head(name, contact, email, level) {
+                            this.id = (0, uuid_1.v4)();
                             this.name = name;
                             this.level = level;
                             this.contact = contact;
@@ -139,8 +140,8 @@ module.exports = {
                     }());
                     Emp = /** @class */ (function (_super) {
                         __extends(Emp, _super);
-                        function Emp(id, name, contact, email, level) {
-                            var _this = _super.call(this, id, name, contact, email, level) || this;
+                        function Emp(name, contact, email, level) {
+                            var _this = _super.call(this, name, contact, email, level) || this;
                             _this.supervisor = "Manager";
                             return _this;
                         }
@@ -148,10 +149,10 @@ module.exports = {
                     }(Head));
                     emp = void 0;
                     if (level === "Manager") {
-                        emp = new Head(id, name_1, contact, email, level);
+                        emp = new Head(name_1, contact, email, level);
                     }
                     else {
-                        emp = new Emp(id, name_1, contact, email, level);
+                        emp = new Emp(name_1, contact, email, level);
                     }
                     info = req.body;
                     allData_1.information.push(info);

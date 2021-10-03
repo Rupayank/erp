@@ -1,5 +1,6 @@
 const fs = require("fs");
 import { Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
 
 import {Employee,information} from "../allData";
 module.exports = {
@@ -53,18 +54,17 @@ module.exports = {
 	},
 	async addDetails(req: Request, res: Response) {
 		try {
-			const { id,name, contact, email, level,dateOfJoining } = req.body;
+			const { name, contact, email, level,dateOfJoining } = req.body;
 			//Added new below
 			class Head
 			{				
-				id:number;
+				id:string=uuidv4();
 				name:string;
 				contact:number;
 				email:string;
 				level:string;
-				constructor(id:number,name:string,contact:number,email:string,level:string)
+				constructor(name:string,contact:number,email:string,level:string)
 				{
-					this.id=id;
 					this.name=name;
 					this.level=level;
 					this.contact=contact;
@@ -84,20 +84,20 @@ module.exports = {
 			class Emp extends Head
 			{
 				readonly supervisor:string="Manager";
-				constructor(id:number,name:string,contact:number,email:string,level:string)
+				constructor(name:string,contact:number,email:string,level:string)
 				{
-					super(id,name, contact, email, level);
+					super(name, contact, email, level);
 				}
 				
 			}
 			let emp
 			if(level==="Manager")
 			{
-				emp=new Head(id,name, contact, email, level);
+				emp=new Head(name, contact, email, level);
 			}
 			else 
 			{
-				emp=new Emp(id,name, contact, email, level);
+				emp=new Emp(name, contact, email, level);
 			}
 
 			const info:Employee=req.body;
