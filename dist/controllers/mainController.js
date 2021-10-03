@@ -1,4 +1,19 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,6 +52,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
+var allData_1 = require("../allData");
 module.exports = {
     find: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
@@ -50,7 +66,6 @@ module.exports = {
                     });
                 }
                 catch (err) {
-                    console.log(err);
                     res.send({
                         status: 502,
                         response: null,
@@ -71,17 +86,25 @@ module.exports = {
                     data.forEach(function (info) {
                         if (info.id == req.query.id) {
                             output_1 = info;
+                            return true;
                         }
                     });
-                    res.send({
-                        response: output_1,
-                    });
+                    if (Object.keys(output_1).length === 0) {
+                        res.status(404)
+                            .send({
+                            response: "No data found for id " + req.query.id
+                        });
+                    }
+                    else {
+                        res.send({
+                            response: output_1
+                        });
+                    }
                 }
                 catch (err) {
-                    res.send({
-                        status: 502,
+                    res.status(502)
+                        .send({
                         message: "Internal server error. " + err.message,
-                        response: null,
                     });
                 }
                 return [2 /*return*/];
@@ -90,14 +113,12 @@ module.exports = {
     },
     addDetails: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, id, name_1, contact, email, level, dateOfJoining, info, Head, emp;
+            var _a, id, name_1, contact, email, level, dateOfJoining, Head, Emp, emp, info, data, stringifyData;
             return __generator(this, function (_b) {
                 try {
                     _a = req.body, id = _a.id, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, dateOfJoining = _a.dateOfJoining;
-                    info = req.body;
                     Head = /** @class */ (function () {
                         function Head(id, name, contact, email, level) {
-                            this.supervisor = "Manager";
                             this.id = id;
                             this.name = name;
                             this.level = level;
@@ -116,18 +137,32 @@ module.exports = {
                         };
                         return Head;
                     }());
-                    emp = new Head(id, name_1, contact, email, level);
-                    console.log(info);
-                    //Added new above
-                    // let data = fs.readFileSync("data.js");
-                    // data = JSON.parse(data);
-                    // data.push(req.body);
-                    // //Save data
-                    // const stringifyData = JSON.stringify(data);
-                    // fs.writeFileSync("data.js", stringifyData);
+                    Emp = /** @class */ (function (_super) {
+                        __extends(Emp, _super);
+                        function Emp(id, name, contact, email, level) {
+                            var _this = _super.call(this, id, name, contact, email, level) || this;
+                            _this.supervisor = "Manager";
+                            return _this;
+                        }
+                        return Emp;
+                    }(Head));
+                    emp = void 0;
+                    if (level === "Manager") {
+                        emp = new Head(id, name_1, contact, email, level);
+                    }
+                    else {
+                        emp = new Emp(id, name_1, contact, email, level);
+                    }
+                    info = req.body;
+                    allData_1.information.push(info);
+                    data = fs.readFileSync("data.js");
+                    data = JSON.parse(data);
+                    data.push(emp);
+                    stringifyData = JSON.stringify(data);
+                    fs.writeFileSync("data.js", stringifyData);
                     res.send({
                         status: 200,
-                        response: req.body,
+                        response: emp,
                     });
                 }
                 catch (err) {
@@ -170,23 +205,31 @@ module.exports = {
     },
     update: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, user, stringifyData;
+            var data, toUpdate_1, user, stringifyData;
             return __generator(this, function (_a) {
                 try {
                     data = fs.readFileSync("data.js");
                     data = JSON.parse(data);
+                    toUpdate_1 = {};
+                    data.forEach(function (info) {
+                        if (info.id == req.query.id) {
+                            toUpdate_1 = info;
+                            return true;
+                        }
+                    });
                     user = data.filter(function (user) { return user.id != req.query.id; });
-                    user.push(req.body);
+                    Object.assign(toUpdate_1, req.body);
+                    user.push(toUpdate_1);
                     stringifyData = JSON.stringify(user);
                     fs.writeFileSync("data.js", stringifyData);
                     res.send({
                         status: 200,
                         message: "Updated",
-                        response: user,
+                        response: toUpdate_1,
                     });
                 }
                 catch (err) {
-                    console.log(err);
+                    // console.log(err);
                     res.send({
                         status: 502,
                         message: "Internal server error.",

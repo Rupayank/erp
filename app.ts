@@ -1,6 +1,7 @@
 import express from "express";
 const app = express();
 require("dotenv").config();
+const mainRoute = require("./router/mainRoute");
 
 const PORT = process.env.PORT || 9000;
 app.listen(PORT, () => {
@@ -10,5 +11,4 @@ app.listen(PORT, () => {
 app.use(express.json());
 
 //Routes
-const mainRoute = require("./router/mainRoute");
 app.use("/home", mainRoute);

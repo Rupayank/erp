@@ -27,17 +27,27 @@ module.exports = {
 			data.forEach((info: any) => {
 				if (info.id == req.query.id) {
 					output = info;
+					return true
 				}
 			});
-			res.send({
-				response: output,
-			});
+			if(Object.keys(output).length === 0)
+			{
+				res.status(404)
+				.send({
+					response: `No data found for id ${req.query.id}`
+				});
+			}
+			else
+			{
+				res.send({
+					response: output
+				});
+			}
 			
 		} catch (err: any) {
-			res.send({
-				status: 502,
+			res.status(502)
+			.send({
 				message: `Internal server error. ${err.message}`,
-				response: null,
 			});
 		}
 	},
@@ -146,8 +156,17 @@ module.exports = {
 			let data = fs.readFileSync("data.js");
 			data = JSON.parse(data);
 
+			let toUpdate = {};
+			data.forEach((info: any) => {
+				if (info.id == req.query.id) {
+					toUpdate = info;
+					return true
+				}
+			});
+
 			const user = data.filter((user: any) => user.id != req.query.id);
-			user.push(req.body);
+			Object.assign(toUpdate, req.body);
+			user.push(toUpdate);
 
 			//Save data
 			const stringifyData = JSON.stringify(user);
@@ -156,7 +175,7 @@ module.exports = {
 			res.send({
 				status: 200,
 				message: "Updated",
-				response: user,
+				response: toUpdate,
 			});
 		} catch (err) {
 			// console.log(err);
