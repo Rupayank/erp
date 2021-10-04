@@ -157,18 +157,14 @@ module.exports = {
 			let data = allUsers.getData()
 
 			let toUpdate = {};
-			data.some((info: Employee) => {
-				if (info.id == req.query.id) {
-					toUpdate = info;
-					return true;
-				}
-				return false;
-			});
 
 			data.some((user:Employee)=>{
 				if(user.id==req.query.id)
 				{
-					Object.assign(toUpdate, req.body)	//Destructuring
+					Object.assign(user, req.body)	//Destructuring
+					// user={...req.body,...user}
+					// console.log(user);
+					toUpdate=user
 					return true;
 				}
 				return false;
