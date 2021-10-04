@@ -53,15 +53,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var uuid_1 = require("uuid");
+var util_1 = require("./util");
 var allData_1 = require("../allData");
 module.exports = {
     find: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var data;
+            var user, data;
             return __generator(this, function (_a) {
                 try {
-                    data = fs.readFileSync("data.js");
-                    data = JSON.parse(data);
+                    user = new util_1.Manipulation();
+                    data = user.getData();
+                    // data = JSON.parse(data);
                     res.send({
                         response: data,
                     });

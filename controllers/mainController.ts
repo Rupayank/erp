@@ -2,12 +2,13 @@ const fs = require("fs");
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 
+import {Manipulation} from "./util"
 import {Employee,information} from "../allData";
 module.exports = {
 	async find(req: Request, res: Response) {
 		try {
-			let data = fs.readFileSync("data.js");
-			data = JSON.parse(data);
+			const user=new Manipulation()
+			let data = user.getData();
 			res.send({
 				response: data,
 			});
@@ -22,8 +23,8 @@ module.exports = {
 	async findParticular(req: Request, res: Response) {
 		try {
 			//Get data
-			let data = fs.readFileSync("data.js");
-			data = JSON.parse(data);
+			const users=new Manipulation()
+			let data = users.getData()
 			let output = {};
 			data.forEach((info: any) => {
 				if (info.id == req.query.id) {
@@ -107,17 +108,17 @@ module.exports = {
 			// console.log(info);
 			//Added new above
 
-			let data = fs.readFileSync("data.js");
-			data = JSON.parse(data);
+			const users=new Manipulation()
+			let data = users.getData()
 			data.push(emp);
 
 			//Save data
-			const stringifyData = JSON.stringify(data);
-			fs.writeFileSync("data.js", stringifyData);
+			users.saveData(data)
 
 			res.send({
 				status: 200,
-				response: emp,
+				message:"Data saved",
+				response: emp
 			});
 		} catch (err:any) {
 			res.status(500)
@@ -129,14 +130,13 @@ module.exports = {
 	async deleteEmp(req: Request, res: Response) {
 		try {
 			//Get data
-			let data = fs.readFileSync("data.js");
-			data = JSON.parse(data);
+			const users=new Manipulation()
+			let data = users.getData()
 
 			const filterUser = data.filter( (user:any) => user.id != req.query.id );
 
 			//Save data
-			const stringifyData = JSON.stringify(filterUser);
-			fs.writeFileSync("data.js", stringifyData);
+			users.saveData(filterUser)
 
 			res.send({
 					status: 200,
@@ -153,8 +153,8 @@ module.exports = {
 	async update(req: Request, res: Response) {
 		try {
 			//Get data
-			let data = fs.readFileSync("data.js");
-			data = JSON.parse(data);
+			const allUsers=new Manipulation()
+			let data = allUsers.getData()
 
 			let toUpdate = {};
 			data.forEach((info: any) => {
@@ -169,8 +169,7 @@ module.exports = {
 			user.push(toUpdate);
 
 			//Save data
-			const stringifyData = JSON.stringify(user);
-			fs.writeFileSync("data.js", stringifyData);
+			allUsers.saveData(user)
 
 			res.send({
 				status: 200,
@@ -189,8 +188,8 @@ module.exports = {
 	{
 		try {
 			//Get data
-			let data = fs.readFileSync("data.js");
-			data = JSON.parse(data);
+			const allUsers=new Manipulation()
+			let data = allUsers.getData()
 			let output:any = [];
 			data.forEach((info: any) => {
 				if (info.managerId == req.query.id) {
