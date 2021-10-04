@@ -164,7 +164,7 @@ module.exports = {
 			});
 
 			const user = data.filter((user: any) => user.id != req.query.id);
-			Object.assign(toUpdate, req.body);
+			Object.assign(toUpdate, req.body);//Destructing
 			user.push(toUpdate);
 
 			//Save data

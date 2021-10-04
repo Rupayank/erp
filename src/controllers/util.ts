@@ -5,7 +5,7 @@ export class Manipulation
 		let data = fs.readFileSync("data.js");
 		return JSON.parse(data);
 	}
-	saveData(data:any):any
+	saveData(data:any):void
 	{
 		const stringifyData = JSON.stringify(data);
 		fs.writeFileSync("data.js", stringifyData);
