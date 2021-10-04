@@ -67,9 +67,9 @@ module.exports = {
                     });
                 }
                 catch (err) {
-                    res.send({
-                        status: 502,
-                        response: null,
+                    res.status(500)
+                        .send({
+                        message: "Internal server error. " + err.message,
                     });
                 }
                 return [2 /*return*/];
@@ -103,7 +103,7 @@ module.exports = {
                     }
                 }
                 catch (err) {
-                    res.status(502)
+                    res.status(500)
                         .send({
                         message: "Internal server error. " + err.message,
                     });
@@ -114,10 +114,10 @@ module.exports = {
     },
     addDetails: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name_1, contact, email, level, dateOfJoining, Head, Emp, emp, info, data, stringifyData;
+            var _a, name_1, contact, email, level, managerId, Head, Emp, emp, info, data, stringifyData;
             return __generator(this, function (_b) {
                 try {
-                    _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, dateOfJoining = _a.dateOfJoining;
+                    _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, managerId = _a.managerId;
                     Head = /** @class */ (function () {
                         function Head(name, contact, email, level) {
                             this.id = (0, uuid_1.v4)();
@@ -140,9 +140,10 @@ module.exports = {
                     }());
                     Emp = /** @class */ (function (_super) {
                         __extends(Emp, _super);
-                        function Emp(name, contact, email, level) {
+                        function Emp(name, contact, email, level, managerId) {
                             var _this = _super.call(this, name, contact, email, level) || this;
                             _this.supervisor = "Manager";
+                            _this.managerId = managerId;
                             return _this;
                         }
                         return Emp;
@@ -152,7 +153,7 @@ module.exports = {
                         emp = new Head(name_1, contact, email, level);
                     }
                     else {
-                        emp = new Emp(name_1, contact, email, level);
+                        emp = new Emp(name_1, contact, email, level, managerId);
                     }
                     info = req.body;
                     allData_1.information.push(info);
@@ -167,10 +168,9 @@ module.exports = {
                     });
                 }
                 catch (err) {
-                    res.send({
-                        status: 502,
-                        message: "Internal server error.",
-                        response: null,
+                    res.status(500)
+                        .send({
+                        message: "Internal server error. " + err.message,
                     });
                 }
                 return [2 /*return*/];
@@ -194,10 +194,9 @@ module.exports = {
                     });
                 }
                 catch (err) {
-                    res.send({
-                        status: 502,
-                        message: "Internal server error.",
-                        response: null,
+                    res.status(500)
+                        .send({
+                        message: "Internal server error. " + err.message,
                     });
                 }
                 return [2 /*return*/];
@@ -230,15 +229,48 @@ module.exports = {
                     });
                 }
                 catch (err) {
-                    // console.log(err);
-                    res.send({
-                        status: 502,
+                    res.status(500)
+                        .send({
                         message: "Internal server error.",
-                        response: null,
                     });
                 }
                 return [2 /*return*/];
             });
         });
     },
+    findSubord: function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var data, output_2;
+            return __generator(this, function (_a) {
+                try {
+                    data = fs.readFileSync("data.js");
+                    data = JSON.parse(data);
+                    output_2 = [];
+                    data.forEach(function (info) {
+                        if (info.managerId == req.query.id) {
+                            output_2.push(info);
+                        }
+                    });
+                    if (output_2.length === 0) {
+                        res.status(404)
+                            .send({
+                            response: "No subordinate found for manager id " + req.query.id
+                        });
+                    }
+                    else {
+                        res.send({
+                            response: output_2
+                        });
+                    }
+                }
+                catch (err) {
+                    res.status(502)
+                        .send({
+                        message: "Internal server error. " + err.message,
+                    });
+                }
+                return [2 /*return*/];
+            });
+        });
+    }
 };

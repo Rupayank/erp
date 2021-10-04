@@ -11,11 +11,11 @@ module.exports = {
 			res.send({
 				response: data,
 			});
-		} catch (err) {
-			res.send({
-				status: 502,
-				response: null,
-			});
+		} catch (err:any) {
+			res.status(500)
+			.send({
+				message: `Internal server error. ${err.message}`,
+			})
 		}
 	},
 
@@ -46,7 +46,7 @@ module.exports = {
 			}
 			
 		} catch (err: any) {
-			res.status(502)
+			res.status(500)
 			.send({
 				message: `Internal server error. ${err.message}`,
 			});
@@ -54,7 +54,7 @@ module.exports = {
 	},
 	async addDetails(req: Request, res: Response) {
 		try {
-			const { name, contact, email, level,dateOfJoining } = req.body;
+			const { name, contact, email, level,managerId } = req.body;
 			//Added new below
 			class Head
 			{				
@@ -84,9 +84,11 @@ module.exports = {
 			class Emp extends Head
 			{
 				readonly supervisor:string="Manager";
-				constructor(name:string,contact:number,email:string,level:string)
+				managerId:string;
+				constructor(name:string,contact:number,email:string,level:string,managerId:string)
 				{
 					super(name, contact, email, level);
+					this.managerId=managerId;
 				}
 				
 			}
@@ -97,7 +99,7 @@ module.exports = {
 			}
 			else 
 			{
-				emp=new Emp(name, contact, email, level);
+				emp=new Emp(name, contact, email, level,managerId);
 			}
 
 			const info:Employee=req.body;
@@ -117,11 +119,10 @@ module.exports = {
 				status: 200,
 				response: emp,
 			});
-		} catch (err) {
-			res.send({
-				status: 502,
-				message: `Internal server error.`,
-				response: null,
+		} catch (err:any) {
+			res.status(500)
+			.send({
+				message: `Internal server error. ${err.message}`,
 			});
 		}
 	},
@@ -142,11 +143,10 @@ module.exports = {
 					message: "Deleted",
 					response: filterUser,
 				});
-		} catch (err) {
-			res.send({
-				status: 502,
-				message: `Internal server error.`,
-				response: null,
+		} catch (err:any) {
+			res.status(500)
+			.send({
+				message: `Internal server error. ${err.message}`,
 			});
 		}
 	},
@@ -178,12 +178,43 @@ module.exports = {
 				response: toUpdate,
 			});
 		} catch (err) {
-			// console.log(err);
-			res.send({
-				status: 502,
+			res.status(500)
+			.send({
 				message: `Internal server error.`,
-				response: null,
 			});
 		}
 	},
+
+	async findSubord(req: Request, res: Response)
+	{
+		try {
+			//Get data
+			let data = fs.readFileSync("data.js");
+			data = JSON.parse(data);
+			let output:any = [];
+			data.forEach((info: any) => {
+				if (info.managerId == req.query.id) {
+					output.push(info);
+				}
+			});
+			if(output.length === 0)
+			{
+				res.status(404)
+				.send({
+					response: `No subordinate found for manager id ${req.query.id}`
+				});
+			}
+			else
+			{
+				res.send({
+					response: output
+				});
+			}
+		} catch (err: any) {
+			res.status(502)
+			.send({
+				message: `Internal server error. ${err.message}`,
+			});
+		}
+	}
 };

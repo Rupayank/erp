@@ -4,6 +4,7 @@ var router = express.Router();
 var mainController = require('../controllers/mainController');
 router.get('/', mainController.find);
 router.get('/emp', mainController.findParticular);
+router.get('/subord', mainController.findSubord);
 router.post('/', mainController.addDetails);
 router.delete('/', mainController.deleteEmp);
 router.patch('/', mainController.update);
