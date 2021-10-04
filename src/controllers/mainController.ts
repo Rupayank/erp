@@ -25,11 +25,12 @@ module.exports = {
 			const users=new Manipulation()
 			let data = users.getData()
 			let output = {};
-			data.forEach((info: any) => {
+			data.some((info: Employee) => {
 				if (info.id == req.query.id) {
 					output = info;
 					return true
 				}
+				return false
 			});
 			if(Object.keys(output).length === 0)
 			{
@@ -132,7 +133,7 @@ module.exports = {
 			const users=new Manipulation()
 			let data = users.getData()
 
-			const filterUser = data.filter( (user:any) => user.id != req.query.id );
+			const filterUser = data.filter( (user:Employee) => user.id != req.query.id );
 
 			//Save data
 			users.saveData(filterUser)
@@ -156,19 +157,25 @@ module.exports = {
 			let data = allUsers.getData()
 
 			let toUpdate = {};
-			data.forEach((info: any) => {
+			data.some((info: Employee) => {
 				if (info.id == req.query.id) {
 					toUpdate = info;
-					return true
+					return true;
 				}
+				return false;
 			});
 
-			const user = data.filter((user: any) => user.id != req.query.id);
-			Object.assign(toUpdate, req.body);//Destructing
-			user.push(toUpdate);
+			data.some((user:Employee)=>{
+				if(user.id==req.query.id)
+				{
+					Object.assign(toUpdate, req.body)	//Destructuring
+					return true;
+				}
+				return false;
+			})
 
 			//Save data
-			allUsers.saveData(user)
+			allUsers.saveData(data)
 
 			res.send({
 				status: 200,
@@ -190,7 +197,7 @@ module.exports = {
 			const allUsers=new Manipulation()
 			let data = allUsers.getData()
 			let output:any = [];
-			data.forEach((info: any) => {
+			data.forEach((info: Employee) => {
 				if (info.managerId == req.query.id) {
 					output.push(info);
 				}

@@ -84,11 +84,12 @@ module.exports = {
                     users = new util_1.Manipulation();
                     data = users.getData();
                     output_1 = {};
-                    data.forEach(function (info) {
+                    data.some(function (info) {
                         if (info.id == req.query.id) {
                             output_1 = info;
                             return true;
                         }
+                        return false;
                     });
                     if (Object.keys(output_1).length === 0) {
                         res.status(404)
@@ -206,23 +207,28 @@ module.exports = {
     },
     update: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var allUsers, data, toUpdate_1, user;
+            var allUsers, data, toUpdate_1;
             return __generator(this, function (_a) {
                 try {
                     allUsers = new util_1.Manipulation();
                     data = allUsers.getData();
                     toUpdate_1 = {};
-                    data.forEach(function (info) {
+                    data.some(function (info) {
                         if (info.id == req.query.id) {
                             toUpdate_1 = info;
                             return true;
                         }
+                        return false;
                     });
-                    user = data.filter(function (user) { return user.id != req.query.id; });
-                    Object.assign(toUpdate_1, req.body);
-                    user.push(toUpdate_1);
+                    data.some(function (user) {
+                        if (user.id == req.query.id) {
+                            Object.assign(toUpdate_1, req.body); //Destructuring
+                            return true;
+                        }
+                        return false;
+                    });
                     //Save data
-                    allUsers.saveData(user);
+                    allUsers.saveData(data);
                     res.send({
                         status: 200,
                         message: "Updated",

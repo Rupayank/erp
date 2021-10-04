@@ -1,18 +1,20 @@
 export interface Employee {
-    id: number;
+    id: string;
     name: string;
-    level: string;
     contact: number;
-    dateOfJoining: Date;
+	email:string;
+    level: string;
+	managerId?:string;
+	supervisor?:string;
 }
 
 
  export let information: Employee[] = [
         {
-            id: 1,
+            id: "1",
             name:"RK",
             level:"Manger",
             contact:112233,
-            dateOfJoining:new Date("2019-01-16")
+            email:"kkr@g.com"
         }
     ];
