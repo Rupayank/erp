@@ -56,7 +56,6 @@ module.exports = {
 	async addDetails(req: Request, res: Response) {
 		try {
 			const { name, contact, email, level,managerId } = req.body;
-			//Added new below
 			class Head
 			{				
 				id:string=uuidv4();
@@ -102,11 +101,6 @@ module.exports = {
 			{
 				emp=new Emp(name, contact, email, level,managerId);
 			}
-
-			const info:Employee=req.body;
-			information.push(info);
-			// console.log(info);
-			//Added new above
 
 			const users=new Manipulation()
 			let data = users.getData()
