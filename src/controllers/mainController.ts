@@ -150,19 +150,8 @@ module.exports = {
 			const allUsers=new Manipulation()
 			let data = allUsers.getData()
 
-			let toUpdate = {};
-
-			data.some((user:Employee)=>{
-				if(user.id==req.query.id)
-				{
-					Object.assign(user, req.body)	//Destructuring
-					// user={...req.body,...user}
-					// console.log(user);
-					toUpdate=user
-					return true;
-				}
-				return false;
-			})
+			const index=data.findIndex((user=>user.id==req.query.id))
+			data[index]={...data[index],...req.body}
 
 			//Save data
 			allUsers.saveData(data)
@@ -170,7 +159,7 @@ module.exports = {
 			res.send({
 				status: 200,
 				message: "Updated",
-				response: toUpdate,
+				response: data[index],
 			});
 		} catch (err) {
 			res.status(500)

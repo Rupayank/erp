@@ -14,6 +14,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -53,7 +64,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var uuid_1 = require("uuid");
 var util_1 = require("./util");
-var allData_1 = require("../allData");
 module.exports = {
     find: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
@@ -115,7 +125,7 @@ module.exports = {
     },
     addDetails: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name_1, contact, email, level, managerId, Head, Emp, emp, info, users, data;
+            var _a, name_1, contact, email, level, managerId, Head, Emp, emp, users, data;
             return __generator(this, function (_b) {
                 try {
                     _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, managerId = _a.managerId;
@@ -156,8 +166,6 @@ module.exports = {
                     else {
                         emp = new Emp(name_1, contact, email, level, managerId);
                     }
-                    info = req.body;
-                    allData_1.information.push(info);
                     users = new util_1.Manipulation();
                     data = users.getData();
                     data.push(emp);
@@ -207,32 +215,19 @@ module.exports = {
     },
     update: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var allUsers, data, toUpdate_1;
+            var allUsers, data, index;
             return __generator(this, function (_a) {
                 try {
                     allUsers = new util_1.Manipulation();
                     data = allUsers.getData();
-                    toUpdate_1 = {};
-                    data.some(function (info) {
-                        if (info.id == req.query.id) {
-                            toUpdate_1 = info;
-                            return true;
-                        }
-                        return false;
-                    });
-                    data.some(function (user) {
-                        if (user.id == req.query.id) {
-                            Object.assign(toUpdate_1, req.body); //Destructuring
-                            return true;
-                        }
-                        return false;
-                    });
+                    index = data.findIndex((function (user) { return user.id == req.query.id; }));
+                    data[index] = __assign(__assign({}, data[index]), req.body);
                     //Save data
                     allUsers.saveData(data);
                     res.send({
                         status: 200,
                         message: "Updated",
-                        response: toUpdate_1,
+                        response: data[index],
                     });
                 }
                 catch (err) {

@@ -10,11 +10,11 @@ interface Employee {
 }
 export class Manipulation
 {
-	getData():any{
+	getData():Employee[]{
 		let data = fs.readFileSync("data.js");
 		return JSON.parse(data);
 	}
-	saveData(data:Employee):void
+	saveData(data:Employee[]):void
 	{
 		const stringifyData = JSON.stringify(data);
 		fs.writeFileSync("data.js", stringifyData);
