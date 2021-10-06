@@ -128,15 +128,24 @@ module.exports = {
 			let data = users.getData()
 
 			const filterUser = data.filter( (user:Employee) => user.id != req.query.id );
-
-			//Save data
-			users.saveData(filterUser)
-
-			res.send({
-					status: 200,
-					message: "Deleted",
-					response: filterUser,
+			if(data.length==filterUser.length)
+			{
+				res.status(404)
+				.send({
+					message: `No user with id: ${req.query.id} found.`,
 				});
+			}
+			else
+			{
+				//Save data
+				users.saveData(filterUser)
+	
+				res.send({
+						status: 200,
+						message: "Deleted",
+						response: filterUser,
+					});
+			}
 		} catch (err:any) {
 			res.status(500)
 			.send({
@@ -158,16 +167,19 @@ module.exports = {
 					message: `No user with id: ${req.query.id} found.`,
 				});
 			}
-			data[index]={...data[index],...req.body}
-
-			//Save data
-			allUsers.saveData(data)
-
-			res.send({
-				status: 200,
-				message: "Updated",
-				response: data[index],
-			});
+			else
+			{
+				data[index]={...data[index],...req.body}
+	
+				//Save data
+				allUsers.saveData(data)
+	
+				res.send({
+					status: 200,
+					message: "Updated",
+					response: data[index],
+				});
+			}
 		} catch (err) {
 			res.status(500)
 			.send({

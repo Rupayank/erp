@@ -195,13 +195,21 @@ module.exports = {
                     users = new util_1.Manipulation();
                     data = users.getData();
                     filterUser = data.filter(function (user) { return user.id != req.query.id; });
-                    //Save data
-                    users.saveData(filterUser);
-                    res.send({
-                        status: 200,
-                        message: "Deleted",
-                        response: filterUser,
-                    });
+                    if (data.length == filterUser.length) {
+                        res.status(404)
+                            .send({
+                            message: "No user with id: " + req.query.id + " found.",
+                        });
+                    }
+                    else {
+                        //Save data
+                        users.saveData(filterUser);
+                        res.send({
+                            status: 200,
+                            message: "Deleted",
+                            response: filterUser,
+                        });
+                    }
                 }
                 catch (err) {
                     res.status(500)
@@ -221,14 +229,22 @@ module.exports = {
                     allUsers = new util_1.Manipulation();
                     data = allUsers.getData();
                     index = data.findIndex((function (user) { return user.id == req.query.id; }));
-                    data[index] = __assign(__assign({}, data[index]), req.body);
-                    //Save data
-                    allUsers.saveData(data);
-                    res.send({
-                        status: 200,
-                        message: "Updated",
-                        response: data[index],
-                    });
+                    if (!index) {
+                        res.status(404)
+                            .send({
+                            message: "No user with id: " + req.query.id + " found.",
+                        });
+                    }
+                    else {
+                        data[index] = __assign(__assign({}, data[index]), req.body);
+                        //Save data
+                        allUsers.saveData(data);
+                        res.send({
+                            status: 200,
+                            message: "Updated",
+                            response: data[index],
+                        });
+                    }
                 }
                 catch (err) {
                     res.status(500)
