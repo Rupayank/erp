@@ -151,6 +151,13 @@ module.exports = {
 			let data = allUsers.getData()
 
 			const index=data.findIndex((user=>user.id==req.query.id))
+			if(!index)
+			{
+				res.status(404)
+				.send({
+					message: `No user with id: ${req.query.id} found.`,
+				});
+			}
 			data[index]={...data[index],...req.body}
 
 			//Save data
