@@ -70,16 +70,6 @@ module.exports = {
 					this.contact=contact;
 					this.email=email
 				}
-				jsonOut():any{
-					let obj={
-						id:this.id,
-						name:this.name,
-						contact:this.contact,
-						email:this.email,
-						level:this.level
-					}
-					return obj
-				}
 			}
 			class Emp extends Head
 			{
