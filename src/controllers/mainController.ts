@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 
-import {Manipulation} from "./util"
-import {Employee,information} from "../allData";
+import {Database} from "./util"
+import {Employee} from "../allData";
 module.exports = {
 	async find(req: Request, res: Response) {
 		try {
-			const user=new Manipulation()
-			let data = user.getData();
+			const db=new Database()
+			let data = db.getData();
 			res.send({
 				response: data,
 			});
@@ -22,8 +22,8 @@ module.exports = {
 	async findParticular(req: Request, res: Response) {
 		try {
 			//Get data
-			const users=new Manipulation()
-			let data = users.getData()
+			const db=new Database()
+			let data = db.getData()
 			let output = {};
 			data.some((info: Employee) => {
 				if (info.id == req.query.id) {
@@ -53,6 +53,19 @@ module.exports = {
 			});
 		}
 	},
+	// function validateEmail(mail) 
+	// {
+	// 	if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) )return true
+	// 	return false
+	// };
+
+	// function validateContact(inputtxt)
+	// {
+	// 	var phoneno = /^\d{10}$/;
+	// 	console.log(inputtxt);
+	// 	if(inputtxt.match(phoneno))return true;
+	// 	else return false;
+	// };
 	async addDetails(req: Request, res: Response) {
 		try {
 			const { name, contact, email, level,managerId } = req.body;
@@ -69,6 +82,25 @@ module.exports = {
 					this.level=level;
 					this.contact=contact;
 					this.email=email
+				}
+				validateEmail(mail:string):boolean 
+				{
+					if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) )return true
+					return false
+				};
+				validateContact(input:number):boolean
+				{
+					var phoneno = /^\d{10}$/;
+					let contact=input.toString();
+					if(contact.match(phoneno))return true;
+					else return false;
+				};
+				validateLevel(level:string):boolean
+				{
+					let arr=['Developer','Tester','Intern','Manager','Programmer']
+					let test=arr.findIndex(type=>type===level)
+					if(test>=0)return true;
+					return false;
 				}
 			}
 			class Emp extends Head
@@ -92,18 +124,36 @@ module.exports = {
 				emp=new Emp(name, contact, email, level,managerId);
 			}
 
-			const users=new Manipulation()
-			let data = users.getData()
-			data.push(emp);
+			//Validation
+			let valContact:boolean=emp.validateContact(contact);
+			let valEmail:boolean=emp.validateEmail(email);
+			let valLevel:boolean=emp.validateLevel(level);
 
-			//Save data
-			users.saveData(data)
-
-			res.send({
-				status: 200,
-				message:"Data saved",
-				response: emp
-			});
+			if(valContact && valEmail && valLevel)
+			{
+				const users=new Database()
+				let data = users.getData()
+				data.push(emp);
+	
+				users.saveData(data)
+				
+				res.send({
+					message:"Data saved",
+					response: emp
+				});
+			}
+			else
+			{
+				let msg=''
+				if(!valContact)msg+="Invalid contact number ";
+				if(!valEmail)msg+="Invalid email id ";
+				if(!valLevel)msg+="Invalid employee level ";
+				msg+="."
+				res.status(400)
+				.send({
+					message:msg,
+				});
+			}
 		} catch (err:any) {
 			res.status(500)
 			.send({
@@ -114,7 +164,7 @@ module.exports = {
 	async deleteEmp(req: Request, res: Response) {
 		try {
 			//Get data
-			const users=new Manipulation()
+			const users=new Database()
 			let data = users.getData()
 
 			const filterUser = data.filter( (user:Employee) => user.id != req.query.id );
@@ -146,11 +196,11 @@ module.exports = {
 	async update(req: Request, res: Response) {
 		try {
 			//Get data
-			const allUsers=new Manipulation()
+			const allUsers=new Database()
 			let data = allUsers.getData()
 
 			const index=data.findIndex((user=>user.id==req.query.id))
-			if(!index)
+			if(index===-1)
 			{
 				res.status(404)
 				.send({
@@ -182,7 +232,7 @@ module.exports = {
 	{
 		try {
 			//Get data
-			const allUsers=new Manipulation()
+			const allUsers=new Database()
 			let data = allUsers.getData()
 			let output:any = [];
 			data.forEach((info: Employee) => {

@@ -67,11 +67,11 @@ var util_1 = require("./util");
 module.exports = {
     find: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, data;
+            var db, data;
             return __generator(this, function (_a) {
                 try {
-                    user = new util_1.Manipulation();
-                    data = user.getData();
+                    db = new util_1.Database();
+                    data = db.getData();
                     res.send({
                         response: data,
                     });
@@ -88,11 +88,11 @@ module.exports = {
     },
     findParticular: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var users, data, output_1;
+            var db, data, output_1;
             return __generator(this, function (_a) {
                 try {
-                    users = new util_1.Manipulation();
-                    data = users.getData();
+                    db = new util_1.Database();
+                    data = db.getData();
                     output_1 = {};
                     data.some(function (info) {
                         if (info.id == req.query.id) {
@@ -123,9 +123,21 @@ module.exports = {
             });
         });
     },
+    // function validateEmail(mail) 
+    // {
+    // 	if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) )return true
+    // 	return false
+    // };
+    // function validateContact(inputtxt)
+    // {
+    // 	var phoneno = /^\d{10}$/;
+    // 	console.log(inputtxt);
+    // 	if(inputtxt.match(phoneno))return true;
+    // 	else return false;
+    // };
     addDetails: function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name_1, contact, email, level, managerId, Head, Emp, emp, users, data;
+            var _a, name_1, contact, email, level, managerId, Head, Emp, emp, valContact, valEmail, valLevel, users, data, msg;
             return __generator(this, function (_b) {
                 try {
                     _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, managerId = _a.managerId;
@@ -137,15 +149,27 @@ module.exports = {
                             this.contact = contact;
                             this.email = email;
                         }
-                        Head.prototype.jsonOut = function () {
-                            var obj = {
-                                id: this.id,
-                                name: this.name,
-                                contact: this.contact,
-                                email: this.email,
-                                level: this.level
-                            };
-                            return obj;
+                        Head.prototype.validateEmail = function (mail) {
+                            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+                                return true;
+                            return false;
+                        };
+                        ;
+                        Head.prototype.validateContact = function (input) {
+                            var phoneno = /^\d{10}$/;
+                            var contact = input.toString();
+                            if (contact.match(phoneno))
+                                return true;
+                            else
+                                return false;
+                        };
+                        ;
+                        Head.prototype.validateLevel = function (level) {
+                            var arr = ['Developer', 'Tester', 'Intern', 'Manager', 'Programmer'];
+                            var test = arr.findIndex(function (type) { return type === level; });
+                            if (test >= 0)
+                                return true;
+                            return false;
                         };
                         return Head;
                     }());
@@ -166,16 +190,33 @@ module.exports = {
                     else {
                         emp = new Emp(name_1, contact, email, level, managerId);
                     }
-                    users = new util_1.Manipulation();
-                    data = users.getData();
-                    data.push(emp);
-                    //Save data
-                    users.saveData(data);
-                    res.send({
-                        status: 200,
-                        message: "Data saved",
-                        response: emp
-                    });
+                    valContact = emp.validateContact(contact);
+                    valEmail = emp.validateEmail(email);
+                    valLevel = emp.validateLevel(level);
+                    if (valContact && valEmail && valLevel) {
+                        users = new util_1.Database();
+                        data = users.getData();
+                        data.push(emp);
+                        users.saveData(data);
+                        res.send({
+                            message: "Data saved",
+                            response: emp
+                        });
+                    }
+                    else {
+                        msg = '';
+                        if (!valContact)
+                            msg += "Invalid contact number ";
+                        if (!valEmail)
+                            msg += "Invalid email id ";
+                        if (!valLevel)
+                            msg += "Invalid employee level ";
+                        msg += ".";
+                        res.status(400)
+                            .send({
+                            message: msg,
+                        });
+                    }
                 }
                 catch (err) {
                     res.status(500)
@@ -192,7 +233,7 @@ module.exports = {
             var users, data, filterUser;
             return __generator(this, function (_a) {
                 try {
-                    users = new util_1.Manipulation();
+                    users = new util_1.Database();
                     data = users.getData();
                     filterUser = data.filter(function (user) { return user.id != req.query.id; });
                     if (data.length == filterUser.length) {
@@ -226,10 +267,10 @@ module.exports = {
             var allUsers, data, index;
             return __generator(this, function (_a) {
                 try {
-                    allUsers = new util_1.Manipulation();
+                    allUsers = new util_1.Database();
                     data = allUsers.getData();
                     index = data.findIndex((function (user) { return user.id == req.query.id; }));
-                    if (!index) {
+                    if (index === -1) {
                         res.status(404)
                             .send({
                             message: "No user with id: " + req.query.id + " found.",
@@ -261,7 +302,7 @@ module.exports = {
             var allUsers, data, output_2;
             return __generator(this, function (_a) {
                 try {
-                    allUsers = new util_1.Manipulation();
+                    allUsers = new util_1.Database();
                     data = allUsers.getData();
                     output_2 = [];
                     data.forEach(function (info) {

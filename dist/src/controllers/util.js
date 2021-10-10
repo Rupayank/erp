@@ -1,18 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Manipulation = void 0;
+exports.Database = void 0;
 var fs = require("fs");
-var Manipulation = /** @class */ (function () {
-    function Manipulation() {
+var Database = /** @class */ (function () {
+    function Database() {
     }
-    Manipulation.prototype.getData = function () {
+    Database.prototype.getData = function () {
         var data = fs.readFileSync("data.js");
         return JSON.parse(data);
     };
-    Manipulation.prototype.saveData = function (data) {
+    Database.prototype.saveData = function (data) {
         var stringifyData = JSON.stringify(data);
         fs.writeFileSync("data.js", stringifyData);
     };
-    return Manipulation;
+    return Database;
 }());
-exports.Manipulation = Manipulation;
+exports.Database = Database;

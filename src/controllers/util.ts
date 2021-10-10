@@ -8,7 +8,7 @@ interface Employee {
 	managerId?:string;
 	supervisor?:string;
 }
-export class Manipulation
+export class Database
 {
 	getData():Employee[]{
 		let data = fs.readFileSync("data.js");
