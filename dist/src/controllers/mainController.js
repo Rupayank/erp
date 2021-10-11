@@ -188,7 +188,14 @@ module.exports = {
                         emp = new Head(name_1, contact, email, level);
                     }
                     else {
-                        emp = new Emp(name_1, contact, email, level, managerId);
+                        if (managerId)
+                            emp = new Emp(name_1, contact, email, level, managerId);
+                        else {
+                            return [2 /*return*/, res.status(400)
+                                    .send({
+                                    message: "ManagerId is not provided"
+                                })];
+                        }
                     }
                     valContact = emp.validateContact(contact);
                     valEmail = emp.validateEmail(email);

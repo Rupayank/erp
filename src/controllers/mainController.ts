@@ -121,7 +121,14 @@ module.exports = {
 			}
 			else 
 			{
-				emp=new Emp(name, contact, email, level,managerId);
+				if(managerId)emp=new Emp(name, contact, email, level,managerId);
+				else
+				{
+					return res.status(400)
+					.send({
+						message:"ManagerId is not provided"
+					})
+				}
 			}
 
 			//Validation
