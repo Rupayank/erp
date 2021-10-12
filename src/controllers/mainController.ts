@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import {Database} from "./util"
 import {Employee} from "../allData";
 module.exports = {
-	async find(req: Request, res: Response) {
+	find(req: Request, res: Response) {
 		try {
 			const db=new Database()
 			let data = db.getData();
@@ -19,7 +19,7 @@ module.exports = {
 		}
 	},
 
-	async findParticular(req: Request, res: Response) {
+	findParticular(req: Request, res: Response) {
 		try {
 			//Get data
 			const db=new Database()
@@ -53,20 +53,7 @@ module.exports = {
 			});
 		}
 	},
-	// function validateEmail(mail) 
-	// {
-	// 	if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) )return true
-	// 	return false
-	// };
-
-	// function validateContact(inputtxt)
-	// {
-	// 	var phoneno = /^\d{10}$/;
-	// 	console.log(inputtxt);
-	// 	if(inputtxt.match(phoneno))return true;
-	// 	else return false;
-	// };
-	async addDetails(req: Request, res: Response) {
+	addDetails(req: Request, res: Response) {
 		try {
 			const { name, contact, email, level,managerId } = req.body;
 			class Head
@@ -115,13 +102,28 @@ module.exports = {
 				
 			}
 			let emp
+
+			const users=new Database()
+			let data = users.getData()
+
 			if(level==="Manager")
 			{
 				emp=new Head(name, contact, email, level);
 			}
 			else 
 			{
-				if(managerId)emp=new Emp(name, contact, email, level,managerId);
+				if(managerId)
+				{
+					const idx=data.findIndex(user=>user.id===managerId)
+					if(idx>=0)emp=new Emp(name, contact, email, level,managerId);
+					else
+					{
+						return res.status(404)
+						.send({
+							message:"No manager with given id"
+						})
+					}
+				}
 				else
 				{
 					return res.status(400)
@@ -138,8 +140,6 @@ module.exports = {
 
 			if(valContact && valEmail && valLevel)
 			{
-				const users=new Database()
-				let data = users.getData()
 				data.push(emp);
 	
 				users.saveData(data)
@@ -168,7 +168,7 @@ module.exports = {
 			});
 		}
 	},
-	async deleteEmp(req: Request, res: Response) {
+	deleteEmp(req: Request, res: Response) {
 		try {
 			//Get data
 			const users=new Database()
@@ -200,7 +200,7 @@ module.exports = {
 			});
 		}
 	},
-	async update(req: Request, res: Response) {
+	update(req: Request, res: Response) {
 		try {
 			//Get data
 			const allUsers=new Database()
@@ -235,7 +235,7 @@ module.exports = {
 		}
 	},
 
-	async findSubord(req: Request, res: Response)
+	findSubord(req: Request, res: Response)
 	{
 		try {
 			//Get data
