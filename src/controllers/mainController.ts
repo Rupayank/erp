@@ -6,7 +6,7 @@ module.exports = {
 	async find(req: Request, res: Response) {
 		try {
 			const db=new Database()
-			let data = db.getData();
+			let data =await db.getData();
 			res.send({
 				response: data,
 			});
@@ -22,7 +22,7 @@ module.exports = {
 		try {
 			//Get data
 			const db=new Database()
-			let data = db.getData()
+			let data = await db.getData()
 			let output = {};
 			data.some((info: Employee) => {
 				if (info.id == req.query.id) {
@@ -60,7 +60,7 @@ module.exports = {
 			let emp
 
 			const users=new Database()
-			let data = users.getData()
+			let data =await users.getData()
 
 			if(level==="Manager")
 			{
@@ -120,7 +120,7 @@ module.exports = {
 		try {
 			//Get data
 			const users=new Database()
-			let data = users.getData()
+			let data = await users.getData()
 
 			const filterUser = data.filter( (user:Employee) => user.id != req.query.id );
 			if(data.length==filterUser.length)
@@ -152,7 +152,7 @@ module.exports = {
 		try {
 			//Get data
 			const allUsers=new Database()
-			let data = allUsers.getData()
+			let data = await allUsers.getData()
 
 			const index=data.findIndex((user=>user.id==req.query.id))
 			if(index===-1)
@@ -226,7 +226,7 @@ module.exports = {
 		try {
 			//Get data
 			const allUsers=new Database()
-			let data = allUsers.getData()
+			let data = await allUsers.getData()
 			let output:any = [];
 			data.forEach((info: Employee) => {
 				if (info.managerId == req.query.id) {
