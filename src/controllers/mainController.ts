@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 
 import {Database} from "./util"
-import {Employee} from "../allData";
+import {Employee,Head,Emp} from "../allData";
 module.exports = {
 	find(req: Request, res: Response) {
 		try {
@@ -56,51 +56,51 @@ module.exports = {
 	addDetails(req: Request, res: Response) {
 		try {
 			const { name, contact, email, level,managerId } = req.body;
-			class Head
-			{				
-				id:string=uuidv4();
-				name:string;
-				contact:number;
-				email:string;
-				level:string;
-				constructor(name:string,contact:number,email:string,level:string)
-				{
-					this.name=name;
-					this.level=level;
-					this.contact=contact;
-					this.email=email
-				}
-				validateEmail(mail:string):boolean 
-				{
-					if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) )return true
-					return false
-				};
-				validateContact(input:number):boolean
-				{
-					var phoneno = /^\d{10}$/;
-					let contact=input.toString();
-					if(contact.match(phoneno))return true;
-					else return false;
-				};
-				validateLevel(level:string):boolean
-				{
-					let arr=['Developer','Tester','Intern','Manager','Programmer']
-					let test=arr.findIndex(type=>type===level)
-					if(test>=0)return true;
-					return false;
-				}
-			}
-			class Emp extends Head
-			{
-				readonly supervisor:string="Manager";
-				managerId:string;
-				constructor(name:string,contact:number,email:string,level:string,managerId:string)
-				{
-					super(name, contact, email, level);
-					this.managerId=managerId;
-				}
+			// class Head
+			// {				
+			// 	id:string=uuidv4();
+			// 	name:string;
+			// 	contact:number;
+			// 	email:string;
+			// 	level:string;
+			// 	constructor(name:string,contact:number,email:string,level:string)
+			// 	{
+			// 		this.name=name;
+			// 		this.level=level;
+			// 		this.contact=contact;
+			// 		this.email=email
+			// 	}
+			// 	validateEmail(mail:string):boolean 
+			// 	{
+			// 		if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) )return true
+			// 		return false
+			// 	};
+			// 	validateContact(input:number):boolean
+			// 	{
+			// 		var phoneno = /^\d{10}$/;
+			// 		let contact=input.toString();
+			// 		if(contact.match(phoneno))return true;
+			// 		else return false;
+			// 	};
+			// 	validateLevel(level:string):boolean
+			// 	{
+			// 		let arr=['Developer','Tester','Intern','Manager','Programmer']
+			// 		let test=arr.findIndex(type=>type===level)
+			// 		if(test>=0)return true;
+			// 		return false;
+			// 	}
+			// }
+			// class Emp extends Head
+			// {
+			// 	readonly supervisor:string="Manager";
+			// 	managerId:string;
+			// 	constructor(name:string,contact:number,email:string,level:string,managerId:string)
+			// 	{
+			// 		super(name, contact, email, level);
+			// 		this.managerId=managerId;
+			// 	}
 				
-			}
+			// }
 			let emp
 
 			const users=new Database()
@@ -134,11 +134,7 @@ module.exports = {
 			}
 
 			//Validation
-			let valContact:boolean=emp.validateContact(contact);
-			let valEmail:boolean=emp.validateEmail(email);
-			let valLevel:boolean=emp.validateLevel(level);
-
-			if(valContact && valEmail && valLevel)
+			if(emp.validate(contact,email,level))
 			{
 				data.push(emp);
 	
@@ -151,14 +147,9 @@ module.exports = {
 			}
 			else
 			{
-				let msg=''
-				if(!valContact)msg+="Invalid contact number ";
-				if(!valEmail)msg+="Invalid email id ";
-				if(!valLevel)msg+="Invalid employee level ";
-				msg+="."
 				res.status(400)
 				.send({
-					message:msg,
+					message:"Invalid details",
 				});
 			}
 		} catch (err:any) {
@@ -217,15 +208,53 @@ module.exports = {
 			else
 			{
 				data[index]={...data[index],...req.body}
-	
-				//Save data
-				allUsers.saveData(data)
-	
-				res.send({
-					status: 200,
-					message: "Updated",
-					response: data[index],
-				});
+
+				const {name,email,contact,level,managerId}=data[index]
+
+				let emp
+				if(level==='Manager')
+				{
+					emp=new Head(name, contact, email, level);
+				}
+				else
+				{
+					if(managerId)
+					{
+						const idx=data.findIndex(user=>user.id===managerId)
+						if(idx>=0)emp=new Emp(name, contact, email, level,managerId);
+						else
+						{
+							return res.status(404)
+							.send({
+								message:"No manager with given id"
+							})
+						}
+					}
+					else
+					{
+						return res.status(400)
+						.send({
+							message:"ManagerId is not provided"
+						})
+					}
+				}
+				if(emp.validate(contact,email,level))
+				{
+					//Save data
+					allUsers.saveData(data)
+		
+					res.send({
+						message: "Updated",
+						response: data[index],
+					});
+				}
+				else
+				{
+					res.status(400)
+					.send({
+						message:"Invalid details"
+					})
+				}
 			}
 		} catch (err) {
 			res.status(500)

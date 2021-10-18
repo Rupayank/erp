@@ -1,19 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -26,8 +11,8 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var uuid_1 = require("uuid");
 var util_1 = require("./util");
+var allData_1 = require("../allData");
 module.exports = {
     find: function (req, res) {
         try {
@@ -79,59 +64,61 @@ module.exports = {
     addDetails: function (req, res) {
         try {
             var _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, managerId_1 = _a.managerId;
-            var Head = /** @class */ (function () {
-                function Head(name, contact, email, level) {
-                    this.id = (0, uuid_1.v4)();
-                    this.name = name;
-                    this.level = level;
-                    this.contact = contact;
-                    this.email = email;
-                }
-                Head.prototype.validateEmail = function (mail) {
-                    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
-                        return true;
-                    return false;
-                };
-                ;
-                Head.prototype.validateContact = function (input) {
-                    var phoneno = /^\d{10}$/;
-                    var contact = input.toString();
-                    if (contact.match(phoneno))
-                        return true;
-                    else
-                        return false;
-                };
-                ;
-                Head.prototype.validateLevel = function (level) {
-                    var arr = ['Developer', 'Tester', 'Intern', 'Manager', 'Programmer'];
-                    var test = arr.findIndex(function (type) { return type === level; });
-                    if (test >= 0)
-                        return true;
-                    return false;
-                };
-                return Head;
-            }());
-            var Emp = /** @class */ (function (_super) {
-                __extends(Emp, _super);
-                function Emp(name, contact, email, level, managerId) {
-                    var _this = _super.call(this, name, contact, email, level) || this;
-                    _this.supervisor = "Manager";
-                    _this.managerId = managerId;
-                    return _this;
-                }
-                return Emp;
-            }(Head));
+            // class Head
+            // {				
+            // 	id:string=uuidv4();
+            // 	name:string;
+            // 	contact:number;
+            // 	email:string;
+            // 	level:string;
+            // 	constructor(name:string,contact:number,email:string,level:string)
+            // 	{
+            // 		this.name=name;
+            // 		this.level=level;
+            // 		this.contact=contact;
+            // 		this.email=email
+            // 	}
+            // 	validateEmail(mail:string):boolean 
+            // 	{
+            // 		if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) )return true
+            // 		return false
+            // 	};
+            // 	validateContact(input:number):boolean
+            // 	{
+            // 		var phoneno = /^\d{10}$/;
+            // 		let contact=input.toString();
+            // 		if(contact.match(phoneno))return true;
+            // 		else return false;
+            // 	};
+            // 	validateLevel(level:string):boolean
+            // 	{
+            // 		let arr=['Developer','Tester','Intern','Manager','Programmer']
+            // 		let test=arr.findIndex(type=>type===level)
+            // 		if(test>=0)return true;
+            // 		return false;
+            // 	}
+            // }
+            // class Emp extends Head
+            // {
+            // 	readonly supervisor:string="Manager";
+            // 	managerId:string;
+            // 	constructor(name:string,contact:number,email:string,level:string,managerId:string)
+            // 	{
+            // 		super(name, contact, email, level);
+            // 		this.managerId=managerId;
+            // 	}
+            // }
             var emp = void 0;
             var users = new util_1.Database();
             var data = users.getData();
             if (level === "Manager") {
-                emp = new Head(name_1, contact, email, level);
+                emp = new allData_1.Head(name_1, contact, email, level);
             }
             else {
                 if (managerId_1) {
                     var idx = data.findIndex(function (user) { return user.id === managerId_1; });
                     if (idx >= 0)
-                        emp = new Emp(name_1, contact, email, level, managerId_1);
+                        emp = new allData_1.Emp(name_1, contact, email, level, managerId_1);
                     else {
                         return res.status(404)
                             .send({
@@ -147,10 +134,7 @@ module.exports = {
                 }
             }
             //Validation
-            var valContact = emp.validateContact(contact);
-            var valEmail = emp.validateEmail(email);
-            var valLevel = emp.validateLevel(level);
-            if (valContact && valEmail && valLevel) {
+            if (emp.validate(contact, email, level)) {
                 data.push(emp);
                 users.saveData(data);
                 res.send({
@@ -159,17 +143,9 @@ module.exports = {
                 });
             }
             else {
-                var msg = '';
-                if (!valContact)
-                    msg += "Invalid contact number ";
-                if (!valEmail)
-                    msg += "Invalid email id ";
-                if (!valLevel)
-                    msg += "Invalid employee level ";
-                msg += ".";
                 res.status(400)
                     .send({
-                    message: msg,
+                    message: "Invalid details",
                 });
             }
         }
@@ -223,13 +199,44 @@ module.exports = {
             }
             else {
                 data[index] = __assign(__assign({}, data[index]), req.body);
-                //Save data
-                allUsers.saveData(data);
-                res.send({
-                    status: 200,
-                    message: "Updated",
-                    response: data[index],
-                });
+                var _a = data[index], name_2 = _a.name, email = _a.email, contact = _a.contact, level = _a.level, managerId_2 = _a.managerId;
+                var emp = void 0;
+                if (level === 'Manager') {
+                    emp = new allData_1.Head(name_2, contact, email, level);
+                }
+                else {
+                    if (managerId_2) {
+                        var idx = data.findIndex(function (user) { return user.id === managerId_2; });
+                        if (idx >= 0)
+                            emp = new allData_1.Emp(name_2, contact, email, level, managerId_2);
+                        else {
+                            return res.status(404)
+                                .send({
+                                message: "No manager with given id"
+                            });
+                        }
+                    }
+                    else {
+                        return res.status(400)
+                            .send({
+                            message: "ManagerId is not provided"
+                        });
+                    }
+                }
+                if (emp.validate(contact, email, level)) {
+                    //Save data
+                    allUsers.saveData(data);
+                    res.send({
+                        message: "Updated",
+                        response: data[index],
+                    });
+                }
+                else {
+                    res.status(400)
+                        .send({
+                        message: "Invalid details"
+                    });
+                }
             }
         }
         catch (err) {
