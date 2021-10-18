@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { v4 as uuidv4 } from "uuid";
-
 import {Database} from "./util"
-import {Employee,Head,Emp} from "../allData";
+import {Employee,Head,Emp} from "../model/allData";
+
 module.exports = {
-	find(req: Request, res: Response) {
+	async find(req: Request, res: Response) {
 		try {
 			const db=new Database()
 			let data = db.getData();
@@ -19,7 +18,7 @@ module.exports = {
 		}
 	},
 
-	findParticular(req: Request, res: Response) {
+	async findParticular(req: Request, res: Response) {
 		try {
 			//Get data
 			const db=new Database()
@@ -53,54 +52,11 @@ module.exports = {
 			});
 		}
 	},
-	addDetails(req: Request, res: Response) {
+
+	async addDetails(req: Request, res: Response) {
 		try {
 			const { name, contact, email, level,managerId } = req.body;
-			// class Head
-			// {				
-			// 	id:string=uuidv4();
-			// 	name:string;
-			// 	contact:number;
-			// 	email:string;
-			// 	level:string;
-			// 	constructor(name:string,contact:number,email:string,level:string)
-			// 	{
-			// 		this.name=name;
-			// 		this.level=level;
-			// 		this.contact=contact;
-			// 		this.email=email
-			// 	}
-			// 	validateEmail(mail:string):boolean 
-			// 	{
-			// 		if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail) )return true
-			// 		return false
-			// 	};
-			// 	validateContact(input:number):boolean
-			// 	{
-			// 		var phoneno = /^\d{10}$/;
-			// 		let contact=input.toString();
-			// 		if(contact.match(phoneno))return true;
-			// 		else return false;
-			// 	};
-			// 	validateLevel(level:string):boolean
-			// 	{
-			// 		let arr=['Developer','Tester','Intern','Manager','Programmer']
-			// 		let test=arr.findIndex(type=>type===level)
-			// 		if(test>=0)return true;
-			// 		return false;
-			// 	}
-			// }
-			// class Emp extends Head
-			// {
-			// 	readonly supervisor:string="Manager";
-			// 	managerId:string;
-			// 	constructor(name:string,contact:number,email:string,level:string,managerId:string)
-			// 	{
-			// 		super(name, contact, email, level);
-			// 		this.managerId=managerId;
-			// 	}
-				
-			// }
+	
 			let emp
 
 			const users=new Database()
@@ -159,7 +115,8 @@ module.exports = {
 			});
 		}
 	},
-	deleteEmp(req: Request, res: Response) {
+
+	async deleteEmp(req: Request, res: Response) {
 		try {
 			//Get data
 			const users=new Database()
@@ -181,7 +138,6 @@ module.exports = {
 				res.send({
 						status: 200,
 						message: "Deleted",
-						response: filterUser,
 					});
 			}
 		} catch (err:any) {
@@ -191,7 +147,8 @@ module.exports = {
 			});
 		}
 	},
-	update(req: Request, res: Response) {
+
+	async update(req: Request, res: Response) {
 		try {
 			//Get data
 			const allUsers=new Database()
@@ -264,7 +221,7 @@ module.exports = {
 		}
 	},
 
-	findSubord(req: Request, res: Response)
+	async findSubord(req: Request, res: Response)
 	{
 		try {
 			//Get data
