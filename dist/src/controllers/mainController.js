@@ -126,7 +126,7 @@ module.exports = {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 2, , 3]);
+                        _b.trys.push([0, 5, , 6]);
                         _a = req.body, name_1 = _a.name, contact = _a.contact, email = _a.email, level = _a.level, managerId_1 = _a.managerId;
                         emp = void 0;
                         users = new util_1.Database();
@@ -155,30 +155,31 @@ module.exports = {
                                     })];
                             }
                         }
-                        //Validation
-                        if (emp.validate(contact, email, level)) {
-                            data.push(emp);
-                            users.saveData(data);
-                            res.send({
-                                message: "Data saved",
-                                response: emp
-                            });
-                        }
-                        else {
-                            res.status(400)
-                                .send({
-                                message: "Invalid details",
-                            });
-                        }
-                        return [3 /*break*/, 3];
+                        if (!emp.validate(contact, email, level)) return [3 /*break*/, 3];
+                        data.push(emp);
+                        return [4 /*yield*/, users.saveData(data)];
                     case 2:
+                        _b.sent();
+                        res.send({
+                            message: "Data saved",
+                            response: emp
+                        });
+                        return [3 /*break*/, 4];
+                    case 3:
+                        res.status(400)
+                            .send({
+                            message: "Invalid details",
+                        });
+                        _b.label = 4;
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
                         err_3 = _b.sent();
                         res.status(500)
                             .send({
                             message: "Internal server error. " + err_3.message,
                         });
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
@@ -189,35 +190,38 @@ module.exports = {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        _a.trys.push([0, 5, , 6]);
                         users = new util_1.Database();
                         return [4 /*yield*/, users.getData()];
                     case 1:
                         data = _a.sent();
                         filterUser = data.filter(function (user) { return user.id != req.query.id; });
-                        if (data.length == filterUser.length) {
-                            res.status(404)
-                                .send({
-                                message: "No user with id: " + req.query.id + " found.",
-                            });
-                        }
-                        else {
-                            //Save data
-                            users.saveData(filterUser);
-                            res.send({
-                                status: 200,
-                                message: "Deleted",
-                            });
-                        }
-                        return [3 /*break*/, 3];
-                    case 2:
+                        if (!(data.length == filterUser.length)) return [3 /*break*/, 2];
+                        res.status(404)
+                            .send({
+                            message: "No user with id: " + req.query.id + " found.",
+                        });
+                        return [3 /*break*/, 4];
+                    case 2: 
+                    //Save data
+                    return [4 /*yield*/, users.saveData(filterUser)];
+                    case 3:
+                        //Save data
+                        _a.sent();
+                        res.send({
+                            status: 200,
+                            message: "Deleted",
+                        });
+                        _a.label = 4;
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
                         err_4 = _a.sent();
                         res.status(500)
                             .send({
                             message: "Internal server error. " + err_4.message,
                         });
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
@@ -228,68 +232,70 @@ module.exports = {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 2, , 3]);
+                        _b.trys.push([0, 6, , 7]);
                         allUsers = new util_1.Database();
                         return [4 /*yield*/, allUsers.getData()];
                     case 1:
                         data = _b.sent();
                         index = data.findIndex((function (user) { return user.id == req.query.id; }));
-                        if (index === -1) {
-                            res.status(404)
-                                .send({
-                                message: "No user with id: " + req.query.id + " found.",
-                            });
+                        if (!(index === -1)) return [3 /*break*/, 2];
+                        res.status(404)
+                            .send({
+                            message: "No user with id: " + req.query.id + " found.",
+                        });
+                        return [3 /*break*/, 5];
+                    case 2:
+                        data[index] = __assign(__assign({}, data[index]), req.body);
+                        _a = data[index], name_2 = _a.name, email = _a.email, contact = _a.contact, level = _a.level, managerId_2 = _a.managerId;
+                        emp = void 0;
+                        if (level === 'Manager') {
+                            emp = new allData_1.Head(name_2, contact, email, level);
                         }
                         else {
-                            data[index] = __assign(__assign({}, data[index]), req.body);
-                            _a = data[index], name_2 = _a.name, email = _a.email, contact = _a.contact, level = _a.level, managerId_2 = _a.managerId;
-                            emp = void 0;
-                            if (level === 'Manager') {
-                                emp = new allData_1.Head(name_2, contact, email, level);
-                            }
-                            else {
-                                if (managerId_2) {
-                                    idx = data.findIndex(function (user) { return user.id === managerId_2; });
-                                    if (idx >= 0)
-                                        emp = new allData_1.Emp(name_2, contact, email, level, managerId_2);
-                                    else {
-                                        return [2 /*return*/, res.status(404)
-                                                .send({
-                                                message: "No manager with given id"
-                                            })];
-                                    }
-                                }
+                            if (managerId_2) {
+                                idx = data.findIndex(function (user) { return user.id === managerId_2; });
+                                if (idx >= 0)
+                                    emp = new allData_1.Emp(name_2, contact, email, level, managerId_2);
                                 else {
-                                    return [2 /*return*/, res.status(400)
+                                    return [2 /*return*/, res.status(404)
                                             .send({
-                                            message: "ManagerId is not provided"
+                                            message: "No manager with given id"
                                         })];
                                 }
                             }
-                            if (emp.validate(contact, email, level)) {
-                                //Save data
-                                allUsers.saveData(data);
-                                res.send({
-                                    message: "Updated",
-                                    response: data[index],
-                                });
-                            }
                             else {
-                                res.status(400)
-                                    .send({
-                                    message: "Invalid details"
-                                });
+                                return [2 /*return*/, res.status(400)
+                                        .send({
+                                        message: "ManagerId is not provided"
+                                    })];
                             }
                         }
-                        return [3 /*break*/, 3];
-                    case 2:
+                        if (!emp.validate(contact, email, level)) return [3 /*break*/, 4];
+                        //Save data
+                        return [4 /*yield*/, allUsers.saveData(data)];
+                    case 3:
+                        //Save data
+                        _b.sent();
+                        res.send({
+                            message: "Updated",
+                            response: data[index],
+                        });
+                        return [3 /*break*/, 5];
+                    case 4:
+                        res.status(400)
+                            .send({
+                            message: "Invalid details"
+                        });
+                        _b.label = 5;
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
                         err_5 = _b.sent();
                         res.status(500)
                             .send({
                             message: "Internal server error.",
                         });
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         });

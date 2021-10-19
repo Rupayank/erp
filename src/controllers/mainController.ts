@@ -94,7 +94,7 @@ module.exports = {
 			{
 				data.push(emp);
 	
-				users.saveData(data)
+				await users.saveData(data)
 				
 				res.send({
 					message:"Data saved",
@@ -133,7 +133,7 @@ module.exports = {
 			else
 			{
 				//Save data
-				users.saveData(filterUser)
+				await users.saveData(filterUser)
 	
 				res.send({
 						status: 200,
@@ -198,7 +198,7 @@ module.exports = {
 				if(emp.validate(contact,email,level))
 				{
 					//Save data
-					allUsers.saveData(data)
+					await allUsers.saveData(data)
 		
 					res.send({
 						message: "Updated",

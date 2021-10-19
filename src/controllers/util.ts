@@ -1,4 +1,3 @@
-// const fs = require("fs");
 import * as fs from "fs"
 interface Employee {
     id: string;
@@ -11,7 +10,7 @@ interface Employee {
 }
 export class Database
 {
-	async getData():Promise<Employee[]>{
+	getData():Promise<Employee[]>{
 		// let data = fs.readFileSync("data.js");
 		// return JSON.parse(data);
 		return new Promise(resolve => {
@@ -23,9 +22,16 @@ export class Database
 					} );
 				   });
 	}
-	saveData(data:Employee[]):void
+	saveData(data:Employee[]):Promise<void>
 	{
-		const stringifyData = JSON.stringify(data);
-		fs.writeFileSync("data.js", stringifyData);
+		return new Promise(resolve=>{
+			const stringifyData = JSON.stringify(data);
+			resolve(
+			fs.writeFile('data.js',stringifyData, function(err:any){
+				if(err){
+					throw err;
+				}
+			}))
+		})
 	}
 }
