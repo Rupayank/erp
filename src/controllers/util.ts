@@ -11,12 +11,10 @@ interface Employee {
 export class Database
 {
 	getData():Promise<Employee[]>{
-		// let data = fs.readFileSync("data.js");
-		// return JSON.parse(data);
-		return new Promise(resolve => {
+		return new Promise((resolve,reject) => {
 			   fs.readFile('data.js', "utf-8",function read(err:any, data:any)  {
 					   if (err) {
-						   throw err;
+						   reject(err);
 					   }
 					  resolve( JSON.parse(data))
 					} );
