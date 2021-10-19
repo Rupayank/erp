@@ -30,7 +30,6 @@ var Head = /** @class */ (function () {
             return true;
         return false;
     };
-    ;
     Head.prototype.validateContact = function (input) {
         var phoneno = /^\d{10}$/;
         var contact = input.toString();
@@ -39,16 +38,17 @@ var Head = /** @class */ (function () {
         else
             return false;
     };
-    ;
     Head.prototype.validateLevel = function (level) {
-        var arr = ['Developer', 'Tester', 'Intern', 'Manager', 'Programmer'];
+        var arr = ["Developer", "Tester", "Intern", "Manager", "Programmer"];
         var test = arr.findIndex(function (type) { return type === level; });
         if (test >= 0)
             return true;
         return false;
     };
     Head.prototype.validate = function (input, mail, level) {
-        if (this.validateContact(input) && this.validateEmail(mail) && this.validateLevel(level))
+        if (this.validateContact(input) &&
+            this.validateEmail(mail) &&
+            this.validateLevel(level))
             return true;
         return false;
     };

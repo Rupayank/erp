@@ -25,12 +25,10 @@ var Database = /** @class */ (function () {
     function Database() {
     }
     Database.prototype.getData = function () {
-        // let data = fs.readFileSync("data.js");
-        // return JSON.parse(data);
-        return new Promise(function (resolve) {
-            fs.readFile('data.js', "utf-8", function read(err, data) {
+        return new Promise(function (resolve, reject) {
+            fs.readFile("data.js", "utf-8", function read(err, data) {
                 if (err) {
-                    throw err;
+                    reject(err);
                 }
                 resolve(JSON.parse(data));
             });
@@ -39,7 +37,7 @@ var Database = /** @class */ (function () {
     Database.prototype.saveData = function (data) {
         return new Promise(function (resolve) {
             var stringifyData = JSON.stringify(data);
-            resolve(fs.writeFile('data.js', stringifyData, function (err) {
+            resolve(fs.writeFile("data.js", stringifyData, function (err) {
                 if (err) {
                     throw err;
                 }

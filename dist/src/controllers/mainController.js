@@ -67,8 +67,7 @@ module.exports = {
                         return [3 /*break*/, 3];
                     case 2:
                         err_1 = _a.sent();
-                        res.status(500)
-                            .send({
+                        res.status(500).send({
                             message: "Internal server error. " + err_1.message,
                         });
                         return [3 /*break*/, 3];
@@ -97,21 +96,19 @@ module.exports = {
                             return false;
                         });
                         if (Object.keys(output_1).length === 0) {
-                            res.status(404)
-                                .send({
-                                response: "No data found for id " + req.query.id
+                            res.status(404).send({
+                                response: "No data found for id " + req.query.id,
                             });
                         }
                         else {
                             res.send({
-                                response: output_1
+                                response: output_1,
                             });
                         }
                         return [3 /*break*/, 3];
                     case 2:
                         err_2 = _a.sent();
-                        res.status(500)
-                            .send({
+                        res.status(500).send({
                             message: "Internal server error. " + err_2.message,
                         });
                         return [3 /*break*/, 3];
@@ -142,16 +139,14 @@ module.exports = {
                                 if (idx >= 0)
                                     emp = new allData_1.Emp(name_1, contact, email, level, managerId_1);
                                 else {
-                                    return [2 /*return*/, res.status(404)
-                                            .send({
-                                            message: "No manager with given id"
+                                    return [2 /*return*/, res.status(404).send({
+                                            message: "No manager with given id",
                                         })];
                                 }
                             }
                             else {
-                                return [2 /*return*/, res.status(400)
-                                        .send({
-                                        message: "ManagerId is not provided"
+                                return [2 /*return*/, res.status(400).send({
+                                        message: "ManagerId is not provided",
                                     })];
                             }
                         }
@@ -162,20 +157,18 @@ module.exports = {
                         _b.sent();
                         res.send({
                             message: "Data saved",
-                            response: emp
+                            response: emp,
                         });
                         return [3 /*break*/, 4];
                     case 3:
-                        res.status(400)
-                            .send({
+                        res.status(400).send({
                             message: "Invalid details",
                         });
                         _b.label = 4;
                     case 4: return [3 /*break*/, 6];
                     case 5:
                         err_3 = _b.sent();
-                        res.status(500)
-                            .send({
+                        res.status(500).send({
                             message: "Internal server error. " + err_3.message,
                         });
                         return [3 /*break*/, 6];
@@ -197,8 +190,7 @@ module.exports = {
                         data = _a.sent();
                         filterUser = data.filter(function (user) { return user.id != req.query.id; });
                         if (!(data.length == filterUser.length)) return [3 /*break*/, 2];
-                        res.status(404)
-                            .send({
+                        res.status(404).send({
                             message: "No user with id: " + req.query.id + " found.",
                         });
                         return [3 /*break*/, 4];
@@ -216,8 +208,7 @@ module.exports = {
                     case 4: return [3 /*break*/, 6];
                     case 5:
                         err_4 = _a.sent();
-                        res.status(500)
-                            .send({
+                        res.status(500).send({
                             message: "Internal server error. " + err_4.message,
                         });
                         return [3 /*break*/, 6];
@@ -237,10 +228,9 @@ module.exports = {
                         return [4 /*yield*/, allUsers.getData()];
                     case 1:
                         data = _b.sent();
-                        index = data.findIndex((function (user) { return user.id == req.query.id; }));
+                        index = data.findIndex(function (user) { return user.id == req.query.id; });
                         if (!(index === -1)) return [3 /*break*/, 2];
-                        res.status(404)
-                            .send({
+                        res.status(404).send({
                             message: "No user with id: " + req.query.id + " found.",
                         });
                         return [3 /*break*/, 5];
@@ -248,7 +238,7 @@ module.exports = {
                         data[index] = __assign(__assign({}, data[index]), req.body);
                         _a = data[index], name_2 = _a.name, email = _a.email, contact = _a.contact, level = _a.level, managerId_2 = _a.managerId;
                         emp = void 0;
-                        if (level === 'Manager') {
+                        if (level === "Manager") {
                             emp = new allData_1.Head(name_2, contact, email, level);
                         }
                         else {
@@ -257,16 +247,14 @@ module.exports = {
                                 if (idx >= 0)
                                     emp = new allData_1.Emp(name_2, contact, email, level, managerId_2);
                                 else {
-                                    return [2 /*return*/, res.status(404)
-                                            .send({
-                                            message: "No manager with given id"
+                                    return [2 /*return*/, res.status(404).send({
+                                            message: "No manager with given id",
                                         })];
                                 }
                             }
                             else {
-                                return [2 /*return*/, res.status(400)
-                                        .send({
-                                        message: "ManagerId is not provided"
+                                return [2 /*return*/, res.status(400).send({
+                                        message: "ManagerId is not provided",
                                     })];
                             }
                         }
@@ -282,16 +270,14 @@ module.exports = {
                         });
                         return [3 /*break*/, 5];
                     case 4:
-                        res.status(400)
-                            .send({
-                            message: "Invalid details"
+                        res.status(400).send({
+                            message: "Invalid details",
                         });
                         _b.label = 5;
                     case 5: return [3 /*break*/, 7];
                     case 6:
                         err_5 = _b.sent();
-                        res.status(500)
-                            .send({
+                        res.status(500).send({
                             message: "Internal server error.",
                         });
                         return [3 /*break*/, 7];
@@ -318,21 +304,19 @@ module.exports = {
                             }
                         });
                         if (output_2.length === 0) {
-                            res.status(404)
-                                .send({
-                                response: "No subordinate found for manager id " + req.query.id
+                            res.status(404).send({
+                                response: "No subordinate found for manager id " + req.query.id,
                             });
                         }
                         else {
                             res.send({
-                                response: output_2
+                                response: output_2,
                             });
                         }
                         return [3 /*break*/, 3];
                     case 2:
                         err_6 = _a.sent();
-                        res.status(502)
-                            .send({
+                        res.status(502).send({
                             message: "Internal server error. " + err_6.message,
                         });
                         return [3 /*break*/, 3];
@@ -340,5 +324,5 @@ module.exports = {
                 }
             });
         });
-    }
+    },
 };
